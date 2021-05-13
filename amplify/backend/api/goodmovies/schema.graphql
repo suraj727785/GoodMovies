@@ -1,0 +1,39 @@
+type User @model {
+  id: ID!
+  name: String!
+  email: String!
+  mobileNo:String!
+  friend:[User]
+  review: [Review] @connection(keyName: "byUser", fields: ["id"])
+  movie: [Movie] @connection(keyName: "byUser", fields: ["id"])
+}
+type Movie @model 
+@key(name: "byUser", fields: ["userID", "id"]) {
+  id:ID!
+  userID:ID!
+  name:String!
+  cast:String
+  language:String
+  releaseDate:String
+  rating:Float
+  comedy:Float
+  romance:Float
+  Action:Float
+  Thrill:Float
+  Drama:Float
+  horror:Float
+}
+
+type Review @model 
+@key(name: "byUser", fields: ["userID", "id"]) {
+  id:ID!
+  userID:ID!
+  reviewContent:String
+  rating:Int
+  comedy:Int
+  romance:Int
+  Action:Int
+  Thrill:Int
+  Drama:Int
+  horror:Int
+}

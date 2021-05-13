@@ -1,0 +1,11 @@
+{
+  "AppSyncApiName": "goodmovies",
+  "DynamoDBBillingMode": "PAY_PER_REQUEST",
+  "DynamoDBEnableServerSideEncryption": false,
+  "AuthCognitoUserPoolId": {
+    "Fn::GetAtt": [
+      "authgoodmoviesaab3bc6f",
+      "Outputs.UserPoolId"
+    ]
+  }
+}

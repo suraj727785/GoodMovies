@@ -1,0 +1,20 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-goodmovies-dev-155926-authRole",
+      "UnauthRoleArn": "arn:aws:iam::277346655094:role/amplify-goodmovies-dev-155926-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::277346655094:role/amplify-goodmovies-dev-155926-authRole",
+      "Region": "ap-northeast-1",
+      "DeploymentBucketName": "amplify-goodmovies-dev-155926-deployment",
+      "UnauthRoleName": "amplify-goodmovies-dev-155926-unauthRole",
+      "StackName": "amplify-goodmovies-dev-155926",
+      "StackId": "arn:aws:cloudformation:ap-northeast-1:277346655094:stack/amplify-goodmovies-dev-155926/1b643f60-b3d6-11eb-a23f-0aa667fc2249",
+      "AmplifyAppId": "d2zr9ipgo4sok2"
+    },
+    "categories": {
+      "auth": {
+        "goodmoviesaab3bc6f": {}
+      }
+    }
+  }
+}
