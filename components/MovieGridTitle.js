@@ -15,7 +15,7 @@ const MovieGridTitle =(props)=>{
             </View>
             <View style={styles.details}>
               <Text style={styles.title}>{props.title}</Text>
-              <Text style={styles.ratingText}>Overall Rating: <Image style={styles.ratingImage} source={require('../assets/images/star-filled.png')} /> 8.2</Text>
+              <Text style={styles.ratingText}>Overall Rating: <Image style={styles.ratingImage} source={require('../assets/images/star-filled.png')} />{props.overallRating}</Text>
               <Text style={styles.ratingText}>Friends Rating: <Image style={styles.ratingImage} source={require('../assets/images/star-filled.png')} /> 7.8</Text>            
             </View>
           </View>

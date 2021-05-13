@@ -1,20 +1,38 @@
-import React,{useState} from 'react';
+import React,{useState,useEffect} from 'react';
 import {View,StyleSheet,FlatList, Alert } from 'react-native';
-import {MOVIES} from '../data/dummy-data.js';
 import MovieGridTitle from '../components/MovieGridTitle';
 import {HeaderButtons, Item} from 'react-navigation-header-buttons';
 import HeaderButton from'../components/headerButtons';
 import { Ionicons } from '@expo/vector-icons';
 import { Picker } from "native-base";
 import { SearchBar } from 'react-native-elements';
+import {API,graphqlOperation } from 'aws-amplify';
+import {listMovies} from '../src/graphql/queries';
 
 const MoviesScreen = props=>{
     const [sortBy,setSortBy]=useState('');
     const [search,setSearch]=useState('');
-    const [movies,setMovies]=useState(MOVIES);
+    const [movies,setMovies]=useState(null);
+    const [movieList,setMovieList]=useState(null);
+
+    try{
+      useEffect(()=>{
+        const fetchMovies= async () => {
+      const moviesData= await API.graphql(
+        graphqlOperation(listMovies)
+      );
+      setMovies(moviesData.data.listMovies.items);
+      setMovieList(moviesData.data.listMovies.items);
+
+        }
+        fetchMovies();
+      },[]);
+    }catch(e){
+      console.log(e);
+    }
     const searchMovies=(searchText)=>{
       setSearch(searchText);
-      const selectedMovie = MOVIES.filter((item)=>item.name.toLowerCase().indexOf(searchText.toLowerCase()) !== -1);
+      const selectedMovie = movieList.filter((item)=>item.name.toLowerCase().indexOf(searchText.toLowerCase()) !== -1);
       if(selectedMovie!==null){
       setMovies(selectedMovie);
       }else{
@@ -40,12 +58,13 @@ const MoviesScreen = props=>{
         const id = itemData.item.id; 
         return <MovieGridTitle  
         title={itemData.item.name}
-        image={itemData.item.imageUrl}
-        release_date={itemData.item.release_date}
+        image={itemData.item.imageUri}
+        release_date={itemData.item.releaseDate}
         language={itemData.item.language}
+        overallRating={itemData.item.rating}
         onSelect={()=>{
             props.navigation.navigate('MovieDetails', { 
-                movieId: itemData.item.id
+                movieId: id
               });
            }}
         />;

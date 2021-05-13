@@ -12,9 +12,11 @@ type Movie @model
   id:ID!
   userID:ID!
   name:String!
+  imageUri:String!
   cast:String
   language:String
   releaseDate:String
+  aboutMovie:String!
   rating:Float
   comedy:Float
   romance:Float

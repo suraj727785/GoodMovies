@@ -52,9 +52,11 @@ export const getUser = /* GraphQL */ `
           id
           userID
           name
+          imageUri
           cast
           language
           releaseDate
+          aboutMovie
           rating
           comedy
           romance
@@ -111,9 +113,11 @@ export const getMovie = /* GraphQL */ `
       id
       userID
       name
+      imageUri
       cast
       language
       releaseDate
+      aboutMovie
       rating
       comedy
       romance
@@ -137,9 +141,11 @@ export const listMovies = /* GraphQL */ `
         id
         userID
         name
+        imageUri
         cast
         language
         releaseDate
+        aboutMovie
         rating
         comedy
         romance

@@ -1,17 +1,31 @@
-import React,{useState} from 'react';
+import React,{useState,useEffect} from 'react';
 import {View,Text,ScrollView,StyleSheet,Image,TextInput, Button,Modal } from 'react-native';
 import {MOVIES} from '../data/dummy-data.js';
-import RatingStar from '../components/RatingStar';
 import {Rating} from 'react-native-elements';
+import {API,graphqlOperation } from 'aws-amplify';
+import {getMovie} from '../src/graphql/queries';
 
 const MovieDetailsScreen = props=>{
     const movieId = props.navigation.getParam('movieId');
-    const selectedMovie = MOVIES.find(movie => movie.id===movieId);
+    const [selectedMovie,setSelectedMovie] = useState();
     const [modalVisible, setModalVisible] = useState(false);
+      useEffect(()=>{
+        const fetchMovies= async () => {
+      const movieData= await API.graphql(
+        graphqlOperation(getMovie,{id: movieId})
+      );
+      // console.log(movieData.data.getMovie);
+      setSelectedMovie(movieData.data.getMovie);
 
+        }
+      fetchMovies();
+      },[]);
 
    return(
     <ScrollView>
+      {
+        selectedMovie==null?<Image source={{uri: 'https://miro.medium.com/max/880/0*H3jZONKqRuAAeHnG.jpg'}} style={styles.loadingImage}/> 
+    :<View>
     <Modal
     animationType="slide"
     transparent={false}
@@ -72,30 +86,30 @@ const MovieDetailsScreen = props=>{
           </View>      
       </View>       
     </Modal>
-    <Image source={{uri: selectedMovie.imageUrl}} style={styles.image}/>
+    <Image source={{uri: selectedMovie.imageUri}} style={styles.image}/>
     <View>
-        <Text style={styles.title}>{selectedMovie.name}</Text>
+         <Text style={styles.title}>{selectedMovie.name}</Text>
         <View style={styles.detailsContainer}>
             <Text style={styles.detailsTitle}>Release Date:</Text>
-            <Text style={styles.detailsVal}>{selectedMovie.release_date}</Text>
+            <Text style={styles.detailsVal}>{selectedMovie.releaseDate}</Text>
         </View>
         <View style={styles.detailsContainer}>
             <Text style={styles.detailsTitle}>Language:</Text>
-            <Text style={styles.detailsVal}>{selectedMovie.language+","}</Text>
+            <Text style={styles.detailsVal}>{selectedMovie.language}</Text>
         </View>
         <View style={styles.detailsContainer}>
             <Text style={styles.detailsTitle}>Cast:</Text>
-            <Text style={styles.detailsVal}>{selectedMovie.cast+","}</Text>
+            <Text style={styles.detailsVal}>{selectedMovie.cast}</Text>
         </View>
         <View style={styles.descriptionContainer}>
             <Text style={styles.detailsTitle}>About Movie:</Text>
-            <Text style={styles.description}>{selectedMovie.description}</Text>
-        </View>
+            <Text style={styles.description}>{selectedMovie.aboutMovie}</Text>
+        </View> 
         <View style={styles.ratingsContainer}>
             <Text style={styles.ratingText}>Overall Rating: <Image 
             style={styles.ratingImage} 
             source={require('../assets/images/star-filled.png')} 
-            /> 8.2(127)</Text>
+            /> {selectedMovie.rating}(27)</Text>
             <Text style={styles.ratingText}>Friends Rating: <Image 
             style={styles.ratingImage} 
             source={require('../assets/images/star-filled.png')} 
@@ -106,27 +120,27 @@ const MovieDetailsScreen = props=>{
             <Text style={styles.genreRatingText}>Comedy: <Image 
             style={styles.ratingImage} 
             source={require('../assets/images/star-filled.png')} 
-            /> 8.2(127)</Text>
+            /> {selectedMovie.comedy}(22)</Text>
             <Text style={styles.genreRatingText}>Romance: <Image 
             style={styles.ratingImage} 
             source={require('../assets/images/star-filled.png')} 
-            /> 7.8(5)</Text>
+            /> {selectedMovie.romance}(5)</Text>
             <Text style={styles.genreRatingText}>Drama: <Image 
             style={styles.ratingImage} 
             source={require('../assets/images/star-filled.png')} 
-            /> 8.2(127)</Text>
+            /> {selectedMovie.Drama}(17)</Text>
             <Text style={styles.genreRatingText}>Action: <Image 
             style={styles.ratingImage} 
             source={require('../assets/images/star-filled.png')} 
-            /> 7.8(5)</Text>
+            /> {selectedMovie.Action}(25)</Text>
             <Text style={styles.genreRatingText}>Thriller: <Image 
             style={styles.ratingImage} 
             source={require('../assets/images/star-filled.png')} 
-            /> 8.2(127)</Text>
+            /> {selectedMovie.Thrill}(11)</Text>
             <Text style={styles.genreRatingText}>Horror: <Image 
             style={styles.ratingImage} 
             source={require('../assets/images/star-filled.png')} 
-            /> 0(0)</Text>
+            /> {selectedMovie.horror}(3)</Text>
         </View>
         <View style={styles.rateAndReviewContainer}>
             <Text style={styles.rateAndReviewTitle}>Rate and Review</Text>
@@ -162,6 +176,8 @@ const MovieDetailsScreen = props=>{
          </View>
         </View>
     </View>
+    </View>
+}
     </ScrollView>
    );
 
@@ -315,6 +331,12 @@ const styles =StyleSheet.create({
       },
       reviewTextContainer:{       
         marginBottom:40
+      },
+      loadingImage:{
+        height:'100%',
+        width:'100%',
+        alignSelf:'center',
+        justifyContent:'center'
       }
     });
 

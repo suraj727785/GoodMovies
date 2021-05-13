@@ -55,9 +55,11 @@ export const createUser = /* GraphQL */ `
           id
           userID
           name
+          imageUri
           cast
           language
           releaseDate
+          aboutMovie
           rating
           comedy
           romance
@@ -129,9 +131,11 @@ export const updateUser = /* GraphQL */ `
           id
           userID
           name
+          imageUri
           cast
           language
           releaseDate
+          aboutMovie
           rating
           comedy
           romance
@@ -203,9 +207,11 @@ export const deleteUser = /* GraphQL */ `
           id
           userID
           name
+          imageUri
           cast
           language
           releaseDate
+          aboutMovie
           rating
           comedy
           romance
@@ -232,9 +238,11 @@ export const createMovie = /* GraphQL */ `
       id
       userID
       name
+      imageUri
       cast
       language
       releaseDate
+      aboutMovie
       rating
       comedy
       romance
@@ -256,9 +264,11 @@ export const updateMovie = /* GraphQL */ `
       id
       userID
       name
+      imageUri
       cast
       language
       releaseDate
+      aboutMovie
       rating
       comedy
       romance
@@ -280,9 +290,11 @@ export const deleteMovie = /* GraphQL */ `
       id
       userID
       name
+      imageUri
       cast
       language
       releaseDate
+      aboutMovie
       rating
       comedy
       romance
