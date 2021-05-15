@@ -1,8 +1,9 @@
 import React,{useState,useEffect} from 'react';
 import {View,Text,ScrollView,StyleSheet,Image,TextInput, Button,Modal } from 'react-native';
 import {Rating} from 'react-native-elements';
-import {API,graphqlOperation,Storage } from 'aws-amplify';
-import {getMovie} from '../src/graphql/queries';
+import {Auth,API,graphqlOperation,Storage } from 'aws-amplify';
+import {getMovie,listReviews} from '../src/graphql/queries';
+import {onCreateReview} from '../src/graphql/subscriptions';
 import RateAndReview from '../components/RateAndReview';
 
 const MovieDetailsScreen = props=>{
@@ -10,11 +11,14 @@ const MovieDetailsScreen = props=>{
     const [selectedMovie,setSelectedMovie] = useState();
     const [imageUri,setImageUri] = useState('');
     const [modalVisible, setModalVisible] = useState(false);
+    const [myReview,setMyReview]=useState(null);
+    const [reviewList,setReviewList]=useState(null);
       useEffect(()=>{
-        const fetchMovies= async () => {
-      const movieData= await API.graphql(
-        graphqlOperation(getMovie,{id: movieId})
-      );
+        const fetchdata= async () => {
+        const userInfo = await Auth.currentAuthenticatedUser({bypassCache:true});
+        const movieData= await API.graphql(
+          graphqlOperation(getMovie,{id: movieId})
+        );
       // console.log(movieData.data.getMovie);
       setSelectedMovie(movieData.data.getMovie);
       let image='';
@@ -25,9 +29,41 @@ const MovieDetailsScreen = props=>{
         image=await Storage.get(movieData.data.getMovie.imageUri);
       }
       setImageUri(image);
+      const myReviewData= await API.graphql(
+        graphqlOperation(
+          listReviews,{
+            filter: 
+            {movieID: {contains: movieId}, and: {userID: {contains: userInfo.attributes.sub}}
         }
-      fetchMovies();
+      })
+      );
+      const allReviewData= await API.graphql(
+        graphqlOperation(
+          listReviews,{
+            filter: 
+            {movieID: {contains: movieId}, and: {userID: {notContains: userInfo.attributes.sub}}
+        }
+      })
+      );
+      console.log(myReviewData.data.listReviews.items[0]);
+      setMyReview(myReviewData.data.listReviews.items[0]);
+      setReviewList(allReviewData.data.listReviews.items);
+        }
+        fetchdata();
       },[]);
+      
+      useEffect(() => {
+        const subscription = API.graphql(
+          graphqlOperation(onCreateReview)
+        ).subscribe({
+          next: (data) => {
+            const newReview = data.value.data.onCreateReview;
+          setMyReview(newReview);
+          }
+        });
+    
+        return () => subscription.unsubscribe();
+      }, [])
 
    return(
     <ScrollView>
@@ -42,6 +78,7 @@ const MovieDetailsScreen = props=>{
       setModalVisible(!modalVisible);
     }}>
     <RateAndReview 
+    movieId={movieId}
     onChangeVisible={()=>{setModalVisible(!modalVisible);}}/>
      </Modal>
     <Image source={{uri: imageUri}} style={styles.image}/>
@@ -100,7 +137,7 @@ const MovieDetailsScreen = props=>{
             source={require('../assets/images/star-filled.png')} 
             /> {selectedMovie.horror}({selectedMovie.horrorCount})</Text>
         </View>
-        <View style={styles.rateAndReviewContainer}>
+        {myReview===null || myReview===undefined ? <View style={styles.rateAndReviewContainer}>
             <Text style={styles.rateAndReviewTitle}>Rate and Review</Text>
             <View style={styles.submitButtonContainer}>
               <Button 
@@ -109,30 +146,26 @@ const MovieDetailsScreen = props=>{
               title="Give Ratings and Review"
               color="#841584"
               accessibilityLabel="Submit Review"/>
-            </View>      
-        </View>
+            </View>    
+        </View>:
         <View style={styles.reviewContainer}>
         <View style={styles.ratingDisplayContainer}>
-          <Text style={styles.ratingDisplayTitle}>User Name</Text>
-            <Rating readonly type='custom' tintColor="#e4ebed" style={{marginTop:8}} ratingCount={10} startingValue={8} imageSize={26}/>
+          <Text style={styles.ratingDisplayTitle}>My Review</Text>
+            <Rating readonly type='custom' tintColor="#e4ebed" style={{marginTop:8}} ratingCount={10} startingValue={myReview.rating} imageSize={26}/>
          </View>
-         <View style={styles.reviewTextContainer}>
-         <Text style={styles.reviewText}>What a fantastic performance from all the actors especially Prabhas , putting all his effort and skill in making this fantasy come alive and yet so captivating, I love the wardrobe functions on all the actors , the elegance
-          and pure magic put together.
-          </Text>
+         <Text style={styles.reviewText}>{myReview.reviewContent}</Text>
          </View>
-        </View>
-        <View style={styles.reviewContainer}>
+        }
+        {reviewList!==null && reviewList.length!==0 &&
+        reviewList.map(rev => <View style={styles.reviewContainer}>
         <View style={styles.ratingDisplayContainer}>
-          <Text style={styles.ratingDisplayTitle}>User Name</Text>
-          <Rating readonly type='custom' tintColor="#e4ebed" style={{marginTop:8}} ratingCount={10} startingValue={9} imageSize={26}/>
+          <Text style={styles.ratingDisplayTitle}>{rev.userName}</Text>
+          <Rating readonly type='custom' tintColor="#e4ebed" style={{marginTop:8}} ratingCount={10} startingValue={rev.rating} imageSize={26}/>
          </View>
-         <View style={styles.reviewTextContainer}>
-         <Text style={styles.reviewText}>What a fantastic performance from all the actors especially Prabhas , putting all his effort and skill in making this fantasy come alive and yet so captivating, I love the wardrobe functions on all the actors , the elegance
-          and pure magic put together.
-          </Text>
-         </View>
+         <Text style={styles.reviewText}>{rev.reviewContent}</Text>
         </View>
+        )
+        }
     </View>
     </View>
 }
@@ -220,9 +253,7 @@ const styles =StyleSheet.create({
       reviewContainer:{
         padding:10,
         marginTop:15,
-        marginBottom:30,
         borderRadius:5,
-        height:120,
         width:"93%",
         borderColor:'black',
         borderTopWidth:0.7,
@@ -241,9 +272,6 @@ const styles =StyleSheet.create({
       },
       reviewText:{
         fontSize:15,
-      },
-      reviewTextContainer:{       
-        marginBottom:40
       },
       loadingImage:{
         height:'100%',

@@ -74,7 +74,7 @@ const MovieCreateForm=(props)=>{
                 )
               );
         }
-        props.navigation.navigate('Movies');
+        props.addMovieCompleted();
     }
     const launchImagePicker=async()=>{
         if (Platform.OS !== 'web') {

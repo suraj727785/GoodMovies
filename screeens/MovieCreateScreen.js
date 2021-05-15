@@ -1,12 +1,12 @@
 import React from 'react';
 import {Text,View,StyleSheet} from 'react-native';
 import MovieCreateForm from '../components/MovieCreateForm';
-
-
-const MovieCreateScreen=()=>{
+const MovieCreateScreen=(props)=>{
     return(
         <View>
-            <MovieCreateForm/>
+            <MovieCreateForm
+            addMovieCompleted={()=>{props.navigation.navigate('Movies')}}
+            />
         </View>
         );
 }

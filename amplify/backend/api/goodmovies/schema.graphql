@@ -39,6 +39,7 @@ type Review @model
   id:ID!
   userID:ID!
   movieID:ID!
+  userName:String!
   reviewContent:String
   rating:Int
   comedy:Int

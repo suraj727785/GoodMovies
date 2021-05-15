@@ -35,6 +35,7 @@ export const getUser = /* GraphQL */ `
           id
           userID
           movieID
+          userName
           reviewContent
           rating
           comedy
@@ -188,6 +189,7 @@ export const getReview = /* GraphQL */ `
       id
       userID
       movieID
+      userName
       reviewContent
       rating
       comedy
@@ -212,6 +214,7 @@ export const listReviews = /* GraphQL */ `
         id
         userID
         movieID
+        userName
         reviewContent
         rating
         comedy

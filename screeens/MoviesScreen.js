@@ -1,5 +1,5 @@
-import React,{useState,useEffect} from 'react';
-import {View,StyleSheet,FlatList, Alert } from 'react-native';
+import React,{useState,useCallback, useEffect} from 'react';
+import {View,StyleSheet,FlatList, Alert,ScrollView,RefreshControl} from 'react-native';
 import MovieGridTitle from '../components/MovieGridTitle';
 import {HeaderButtons, Item} from 'react-navigation-header-buttons';
 import HeaderButton from'../components/headerButtons';
@@ -8,25 +8,53 @@ import { Picker } from "native-base";
 import { SearchBar } from 'react-native-elements';
 import {API,graphqlOperation } from 'aws-amplify';
 import {listMovies} from '../src/graphql/queries';
+import {onCreateMovie} from '../src/graphql/subscriptions';
 
+const wait = (timeout) => {
+  return new Promise(resolve => setTimeout(resolve, timeout));
+}
 const MoviesScreen = props=>{
     const [sortBy,setSortBy]=useState('');
     const [search,setSearch]=useState('');
-    const [movies,setMovies]=useState(null);
-    const [movieList,setMovieList]=useState(null);
+    const [movies,setMovies]=useState([]);
+    const [movieList,setMovieList]=useState([]);
+    const [refreshing, setRefreshing] =useState(false);
+    const onRefresh = useCallback(async() => {
+      const moviesData= await API.graphql(
+        graphqlOperation(listMovies)
+      );
+      setMovies([...moviesData.data.listMovies.items]);
+      setMovieList([...moviesData.data.listMovies.items]);
 
+      setRefreshing(true);
+      wait(2000).then(() => setRefreshing(false));
+    }, []);
     try{
       useEffect(()=>{
         const fetchMovies= async () => {
       const moviesData= await API.graphql(
         graphqlOperation(listMovies)
       );
-      setMovies(moviesData.data.listMovies.items);
-      setMovieList(moviesData.data.listMovies.items);
+      setMovies([...moviesData.data.listMovies.items]);
+      setMovieList([...moviesData.data.listMovies.items]);
 
         }
         fetchMovies();
       },[]);
+
+      useEffect(() => {
+        const subscription = API.graphql(
+          graphqlOperation(onCreateMovie)
+        ).subscribe({
+          next: (data) => {
+            const newMovie = data.value.data.onCreateMovie;
+          setMovies([...movies,newMovie]);
+          setMovieList([...movies,newMovie]);
+          }
+        });    
+        return () => subscription.unsubscribe();
+      }, [])
+
     }catch(e){
       console.log(e);
     }
@@ -71,7 +99,13 @@ const MoviesScreen = props=>{
     
     };
    return(
-       <View>
+       <ScrollView
+       refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+        />
+      } >
          <View style={{flexDirection:'row'}}>
             <Picker
               mode="dropdown"
@@ -112,7 +146,7 @@ const MoviesScreen = props=>{
        onPress={createTwoButtonAlert}
        />
        </View>
-       </View>
+       </ScrollView >
    );
 
 };

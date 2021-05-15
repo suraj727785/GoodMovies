@@ -38,6 +38,7 @@ export const createUser = /* GraphQL */ `
           id
           userID
           movieID
+          userName
           reviewContent
           rating
           comedy
@@ -122,6 +123,7 @@ export const updateUser = /* GraphQL */ `
           id
           userID
           movieID
+          userName
           reviewContent
           rating
           comedy
@@ -206,6 +208,7 @@ export const deleteUser = /* GraphQL */ `
           id
           userID
           movieID
+          userName
           reviewContent
           rating
           comedy
@@ -361,6 +364,7 @@ export const createReview = /* GraphQL */ `
       id
       userID
       movieID
+      userName
       reviewContent
       rating
       comedy
@@ -383,6 +387,7 @@ export const updateReview = /* GraphQL */ `
       id
       userID
       movieID
+      userName
       reviewContent
       rating
       comedy
@@ -405,6 +410,7 @@ export const deleteReview = /* GraphQL */ `
       id
       userID
       movieID
+      userName
       reviewContent
       rating
       comedy
