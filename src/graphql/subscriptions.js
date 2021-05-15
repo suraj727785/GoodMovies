@@ -34,6 +34,7 @@ export const onCreateUser = /* GraphQL */ `
         items {
           id
           userID
+          movieID
           reviewContent
           rating
           comedy
@@ -64,6 +65,13 @@ export const onCreateUser = /* GraphQL */ `
           Thrill
           Drama
           horror
+          ratingCount
+          comedyCount
+          romanceCount
+          ActionCount
+          ThrillCount
+          DramaCount
+          horrorCount
           createdAt
           updatedAt
         }
@@ -107,6 +115,7 @@ export const onUpdateUser = /* GraphQL */ `
         items {
           id
           userID
+          movieID
           reviewContent
           rating
           comedy
@@ -137,6 +146,13 @@ export const onUpdateUser = /* GraphQL */ `
           Thrill
           Drama
           horror
+          ratingCount
+          comedyCount
+          romanceCount
+          ActionCount
+          ThrillCount
+          DramaCount
+          horrorCount
           createdAt
           updatedAt
         }
@@ -180,6 +196,7 @@ export const onDeleteUser = /* GraphQL */ `
         items {
           id
           userID
+          movieID
           reviewContent
           rating
           comedy
@@ -210,6 +227,13 @@ export const onDeleteUser = /* GraphQL */ `
           Thrill
           Drama
           horror
+          ratingCount
+          comedyCount
+          romanceCount
+          ActionCount
+          ThrillCount
+          DramaCount
+          horrorCount
           createdAt
           updatedAt
         }
@@ -238,6 +262,13 @@ export const onCreateMovie = /* GraphQL */ `
       Thrill
       Drama
       horror
+      ratingCount
+      comedyCount
+      romanceCount
+      ActionCount
+      ThrillCount
+      DramaCount
+      horrorCount
       createdAt
       updatedAt
     }
@@ -261,6 +292,13 @@ export const onUpdateMovie = /* GraphQL */ `
       Thrill
       Drama
       horror
+      ratingCount
+      comedyCount
+      romanceCount
+      ActionCount
+      ThrillCount
+      DramaCount
+      horrorCount
       createdAt
       updatedAt
     }
@@ -284,6 +322,13 @@ export const onDeleteMovie = /* GraphQL */ `
       Thrill
       Drama
       horror
+      ratingCount
+      comedyCount
+      romanceCount
+      ActionCount
+      ThrillCount
+      DramaCount
+      horrorCount
       createdAt
       updatedAt
     }
@@ -294,6 +339,7 @@ export const onCreateReview = /* GraphQL */ `
     onCreateReview {
       id
       userID
+      movieID
       reviewContent
       rating
       comedy
@@ -312,6 +358,7 @@ export const onUpdateReview = /* GraphQL */ `
     onUpdateReview {
       id
       userID
+      movieID
       reviewContent
       rating
       comedy
@@ -330,6 +377,7 @@ export const onDeleteReview = /* GraphQL */ `
     onDeleteReview {
       id
       userID
+      movieID
       reviewContent
       rating
       comedy

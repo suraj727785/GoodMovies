@@ -34,6 +34,7 @@ export const getUser = /* GraphQL */ `
         items {
           id
           userID
+          movieID
           reviewContent
           rating
           comedy
@@ -64,6 +65,13 @@ export const getUser = /* GraphQL */ `
           Thrill
           Drama
           horror
+          ratingCount
+          comedyCount
+          romanceCount
+          ActionCount
+          ThrillCount
+          DramaCount
+          horrorCount
           createdAt
           updatedAt
         }
@@ -125,6 +133,13 @@ export const getMovie = /* GraphQL */ `
       Thrill
       Drama
       horror
+      ratingCount
+      comedyCount
+      romanceCount
+      ActionCount
+      ThrillCount
+      DramaCount
+      horrorCount
       createdAt
       updatedAt
     }
@@ -153,6 +168,13 @@ export const listMovies = /* GraphQL */ `
         Thrill
         Drama
         horror
+        ratingCount
+        comedyCount
+        romanceCount
+        ActionCount
+        ThrillCount
+        DramaCount
+        horrorCount
         createdAt
         updatedAt
       }
@@ -165,6 +187,7 @@ export const getReview = /* GraphQL */ `
     getReview(id: $id) {
       id
       userID
+      movieID
       reviewContent
       rating
       comedy
@@ -188,6 +211,7 @@ export const listReviews = /* GraphQL */ `
       items {
         id
         userID
+        movieID
         reviewContent
         rating
         comedy

@@ -1,13 +1,14 @@
 import React,{useState,useEffect} from 'react';
 import {View,Text,ScrollView,StyleSheet,Image,TextInput, Button,Modal } from 'react-native';
-import {MOVIES} from '../data/dummy-data.js';
 import {Rating} from 'react-native-elements';
-import {API,graphqlOperation } from 'aws-amplify';
+import {API,graphqlOperation,Storage } from 'aws-amplify';
 import {getMovie} from '../src/graphql/queries';
+import RateAndReview from '../components/RateAndReview';
 
 const MovieDetailsScreen = props=>{
     const movieId = props.navigation.getParam('movieId');
     const [selectedMovie,setSelectedMovie] = useState();
+    const [imageUri,setImageUri] = useState('');
     const [modalVisible, setModalVisible] = useState(false);
       useEffect(()=>{
         const fetchMovies= async () => {
@@ -16,7 +17,14 @@ const MovieDetailsScreen = props=>{
       );
       // console.log(movieData.data.getMovie);
       setSelectedMovie(movieData.data.getMovie);
-
+      let image='';
+      if(movieData.data.getMovie.imageUri===''){
+        image ='https://st2.depositphotos.com/3687485/9010/v/600/depositphotos_90102796-stock-illustration-cinema-film-clapper-board-vector.jpg';
+      }
+      else{
+        image=await Storage.get(movieData.data.getMovie.imageUri);
+      }
+      setImageUri(image);
         }
       fetchMovies();
       },[]);
@@ -33,60 +41,10 @@ const MovieDetailsScreen = props=>{
     onRequestClose={() => {
       setModalVisible(!modalVisible);
     }}>
-      <View style={styles.rateAndReviewContainer}>
-          <Text style={styles.rateAndReviewTitle}>Rate and Review</Text>
-          <View style={styles.ratingInputContainer}>
-            <Text style={styles.ratingInputTitle}>Overall Rating:</Text>
-            <Rating style={{marginTop:8}} ratingCount={10} startingValue={0} imageSize={26}/>
-          </View>
-          <View style={styles.ratingInputContainer}>
-            <Text style={styles.ratingInputTitle}>Comedy:</Text>
-            <Rating style={{marginTop:8}} ratingCount={10} startingValue={0} imageSize={26}/>
-          </View>
-          <View style={styles.ratingInputContainer}>
-            <Text style={styles.ratingInputTitle}>Romance:</Text>
-            <Rating style={{marginTop:8}} ratingCount={10} startingValue={0} imageSize={26}/>
-          </View>
-          <View style={styles.ratingInputContainer}>
-            <Text style={styles.ratingInputTitle}>Drama:</Text>
-            <Rating style={{marginTop:8}} ratingCount={10} startingValue={0} imageSize={26}/>
-          </View>
-          <View style={styles.ratingInputContainer}>
-            <Text style={styles.ratingInputTitle}>Action:</Text>
-            <Rating style={{marginTop:8}} ratingCount={10} startingValue={0} imageSize={26}/>
-          </View>
-          <View style={styles.ratingInputContainer}>
-            <Text style={styles.ratingInputTitle}>Thriller:</Text>
-            <Rating style={{marginTop:8}} ratingCount={10} startingValue={0} imageSize={26}/>
-          </View>
-          <View style={styles.ratingInputContainer}>
-            <Text style={styles.ratingInputTitle}>Horror:</Text>
-            <Rating style={{marginTop:8}} ratingCount={10} startingValue={0} imageSize={26}/>
-          </View>
-          
-          <View style={styles.reviewInputContainer}>
-                  <TextInput 
-                  style={styles.reviewInput}
-                  placeholder={"What do you think about this movie"}
-                  multiline
-                  />
-              </View>
-          <View style={styles.submitButtonContainer}>
-          <Button 
-            onPress={()=>{setModalVisible(!modalVisible);}}
-            style={styles.submitButton}
-            title="Close"
-            color="#841584"
-            accessibilityLabel="Close Review"/>
-            <Button 
-            style={styles.submitButton}
-            title="Submit"
-            color="#841584"
-            accessibilityLabel="Submit Review"/>
-          </View>      
-      </View>       
-    </Modal>
-    <Image source={{uri: selectedMovie.imageUri}} style={styles.image}/>
+    <RateAndReview 
+    onChangeVisible={()=>{setModalVisible(!modalVisible);}}/>
+     </Modal>
+    <Image source={{uri: imageUri}} style={styles.image}/>
     <View>
          <Text style={styles.title}>{selectedMovie.name}</Text>
         <View style={styles.detailsContainer}>
@@ -109,7 +67,7 @@ const MovieDetailsScreen = props=>{
             <Text style={styles.ratingText}>Overall Rating: <Image 
             style={styles.ratingImage} 
             source={require('../assets/images/star-filled.png')} 
-            /> {selectedMovie.rating}(27)</Text>
+            /> {selectedMovie.rating}({selectedMovie.ratingCount})</Text>
             <Text style={styles.ratingText}>Friends Rating: <Image 
             style={styles.ratingImage} 
             source={require('../assets/images/star-filled.png')} 
@@ -120,27 +78,27 @@ const MovieDetailsScreen = props=>{
             <Text style={styles.genreRatingText}>Comedy: <Image 
             style={styles.ratingImage} 
             source={require('../assets/images/star-filled.png')} 
-            /> {selectedMovie.comedy}(22)</Text>
+            /> {selectedMovie.comedy}({selectedMovie.comedyCount})</Text>
             <Text style={styles.genreRatingText}>Romance: <Image 
             style={styles.ratingImage} 
             source={require('../assets/images/star-filled.png')} 
-            /> {selectedMovie.romance}(5)</Text>
+            /> {selectedMovie.romance}({selectedMovie.romanceCount})</Text>
             <Text style={styles.genreRatingText}>Drama: <Image 
             style={styles.ratingImage} 
             source={require('../assets/images/star-filled.png')} 
-            /> {selectedMovie.Drama}(17)</Text>
+            /> {selectedMovie.Drama}({selectedMovie.DramaCount})</Text>
             <Text style={styles.genreRatingText}>Action: <Image 
             style={styles.ratingImage} 
             source={require('../assets/images/star-filled.png')} 
-            /> {selectedMovie.Action}(25)</Text>
+            /> {selectedMovie.Action}({selectedMovie.ActionCount})</Text>
             <Text style={styles.genreRatingText}>Thriller: <Image 
             style={styles.ratingImage} 
             source={require('../assets/images/star-filled.png')} 
-            /> {selectedMovie.Thrill}(11)</Text>
+            /> {selectedMovie.Thrill}({selectedMovie.ThrillCount})</Text>
             <Text style={styles.genreRatingText}>Horror: <Image 
             style={styles.ratingImage} 
             source={require('../assets/images/star-filled.png')} 
-            /> {selectedMovie.horror}(3)</Text>
+            /> {selectedMovie.horror}({selectedMovie.horrorCount})</Text>
         </View>
         <View style={styles.rateAndReviewContainer}>
             <Text style={styles.rateAndReviewTitle}>Rate and Review</Text>
@@ -258,52 +216,7 @@ const styles =StyleSheet.create({
         marginLeft:10,
         marginBottom:10
       },
-      rateAndReviewContainer:{
-        marginBottom:10,
-        marginLeft:10,
-      },
-      rateAndReviewTitle:{
-          fontSize:18,
-          
-      },
-      reviewInput:{
-        fontSize:18,
-      },
-      reviewInputContainer:{
-        padding:10,
-        marginTop:15,
-        borderRadius:5,
-        height:120,
-        width:"93%",
-        borderColor:'black',
-        borderWidth:0.7,
-        alignSelf:'center'
-      },
-      ratingInputContainer:{
-        flexDirection:'row',
-        marginBottom:8,
-        justifyContent:'space-between',
-        marginRight:20,
-      },
-      ratingInputTitle:{
-        fontSize:15,
-        marginTop:10,
-        marginRight:5,
-      },
-      submitButtonContainer:{
-        marginTop:10,
-        justifyContent:'space-between',
-        marginRight:12,
-        flexDirection:'row'
-      },
-      submitButton:{
-        borderRadius:30,
-        marginRight:30
-      },
-      closeButton:{
-        width:120,
 
-      },
       reviewContainer:{
         padding:10,
         marginTop:15,
@@ -337,7 +250,25 @@ const styles =StyleSheet.create({
         width:'100%',
         alignSelf:'center',
         justifyContent:'center'
-      }
+      },
+      rateAndReviewContainer:{
+        marginBottom:10,
+        marginLeft:10,
+      },
+      rateAndReviewTitle:{
+          fontSize:18,
+          
+      },
+      submitButtonContainer:{
+        marginTop:10,
+        justifyContent:'space-between',
+        marginRight:12,
+        flexDirection:'row'
+      },
+      submitButton:{
+        borderRadius:30,
+        marginRight:30
+      },
     });
 
 

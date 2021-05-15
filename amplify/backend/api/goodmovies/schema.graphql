@@ -24,12 +24,21 @@ type Movie @model
   Thrill:Float
   Drama:Float
   horror:Float
+  ratingCount:Int
+  comedyCount:Int
+  romanceCount:Int
+  ActionCount:Int
+  ThrillCount:Int
+  DramaCount:Int
+  horrorCount:Int
 }
 
 type Review @model 
-@key(name: "byUser", fields: ["userID", "id"]) {
+@key(name: "byUser", fields: ["userID", "id"])
+@key(name: "byMovie", fields: ["movieID", "id"]) {
   id:ID!
   userID:ID!
+  movieID:ID!
   reviewContent:String
   rating:Int
   comedy:Int

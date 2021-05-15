@@ -1,17 +1,34 @@
-import React from 'react';
+import React,{useEffect,useState} from 'react';
 import {Text,View,StyleSheet,TouchableOpacity,Platform, TouchableNativeFeedback,Image} from 'react-native';
 import Card from './card';
+import {Storage} from 'aws-amplify';
 const MovieGridTitle =(props)=>{
+    const [imageUri,setImageUri]=useState('');
     let TouchableCmp =TouchableOpacity;
     if(Platform.OS==='android' && Platform.Version>=21){
         TouchableCmp=TouchableNativeFeedback;
     }
+    useEffect(()=>{
+      const fetchImage= async () => {
+      let image='';
+      if(props.image===''){
+        image ='https://st2.depositphotos.com/3687485/9010/v/600/depositphotos_90102796-stock-illustration-cinema-film-clapper-board-vector.jpg';
+      }
+      else{
+        image=await Storage.get(props.image);
+      }
+      setImageUri(image);
+
+      }
+      fetchImage();
+    },[]);
+
     return <Card style={styles.product}>
         <TouchableCmp onPress={props.onSelect}>
       <View style={styles.touchable}>
           <View>
             <View style={styles.imageContainer}>
-              <Image style={styles.image} source={{ uri: props.image }} />
+              <Image style={styles.image} source={{ uri: imageUri }} />
             </View>
             <View style={styles.details}>
               <Text style={styles.title}>{props.title}</Text>

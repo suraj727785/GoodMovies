@@ -21,6 +21,7 @@
     "expo-av": "~8.7.0",
     "expo-constants": "~9.3.3",
     "expo-contacts": "~8.6.0",
+    "expo-document-picker": "^9.1.2",
     "expo-image-picker": "^9.2.1",
     "expo-linear-gradient": "~8.4.0",
     "link": "^0.1.5",
