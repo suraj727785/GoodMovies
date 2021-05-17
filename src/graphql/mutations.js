@@ -11,27 +11,18 @@ export const createUser = /* GraphQL */ `
       name
       email
       mobileNo
-      friend {
-        id
-        name
-        email
-        mobileNo
-        friend {
+      userFriend {
+        items {
           id
+          userID
+          friendUserID
           name
           email
           mobileNo
           createdAt
           updatedAt
         }
-        review {
-          nextToken
-        }
-        movie {
-          nextToken
-        }
-        createdAt
-        updatedAt
+        nextToken
       }
       review {
         items {
@@ -96,27 +87,18 @@ export const updateUser = /* GraphQL */ `
       name
       email
       mobileNo
-      friend {
-        id
-        name
-        email
-        mobileNo
-        friend {
+      userFriend {
+        items {
           id
+          userID
+          friendUserID
           name
           email
           mobileNo
           createdAt
           updatedAt
         }
-        review {
-          nextToken
-        }
-        movie {
-          nextToken
-        }
-        createdAt
-        updatedAt
+        nextToken
       }
       review {
         items {
@@ -181,28 +163,214 @@ export const deleteUser = /* GraphQL */ `
       name
       email
       mobileNo
-      friend {
-        id
-        name
-        email
-        mobileNo
-        friend {
+      userFriend {
+        items {
           id
+          userID
+          friendUserID
           name
           email
           mobileNo
           createdAt
           updatedAt
         }
-        review {
-          nextToken
-        }
-        movie {
-          nextToken
-        }
-        createdAt
-        updatedAt
+        nextToken
       }
+      review {
+        items {
+          id
+          userID
+          movieID
+          userName
+          reviewContent
+          rating
+          comedy
+          romance
+          Action
+          Thrill
+          Drama
+          horror
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
+      movie {
+        items {
+          id
+          userID
+          name
+          imageUri
+          cast
+          language
+          releaseDate
+          aboutMovie
+          rating
+          comedy
+          romance
+          Action
+          Thrill
+          Drama
+          horror
+          ratingCount
+          comedyCount
+          romanceCount
+          ActionCount
+          ThrillCount
+          DramaCount
+          horrorCount
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const createUserFriend = /* GraphQL */ `
+  mutation CreateUserFriend(
+    $input: CreateUserFriendInput!
+    $condition: ModelUserFriendConditionInput
+  ) {
+    createUserFriend(input: $input, condition: $condition) {
+      id
+      userID
+      friendUserID
+      name
+      email
+      mobileNo
+      review {
+        items {
+          id
+          userID
+          movieID
+          userName
+          reviewContent
+          rating
+          comedy
+          romance
+          Action
+          Thrill
+          Drama
+          horror
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
+      movie {
+        items {
+          id
+          userID
+          name
+          imageUri
+          cast
+          language
+          releaseDate
+          aboutMovie
+          rating
+          comedy
+          romance
+          Action
+          Thrill
+          Drama
+          horror
+          ratingCount
+          comedyCount
+          romanceCount
+          ActionCount
+          ThrillCount
+          DramaCount
+          horrorCount
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const updateUserFriend = /* GraphQL */ `
+  mutation UpdateUserFriend(
+    $input: UpdateUserFriendInput!
+    $condition: ModelUserFriendConditionInput
+  ) {
+    updateUserFriend(input: $input, condition: $condition) {
+      id
+      userID
+      friendUserID
+      name
+      email
+      mobileNo
+      review {
+        items {
+          id
+          userID
+          movieID
+          userName
+          reviewContent
+          rating
+          comedy
+          romance
+          Action
+          Thrill
+          Drama
+          horror
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
+      movie {
+        items {
+          id
+          userID
+          name
+          imageUri
+          cast
+          language
+          releaseDate
+          aboutMovie
+          rating
+          comedy
+          romance
+          Action
+          Thrill
+          Drama
+          horror
+          ratingCount
+          comedyCount
+          romanceCount
+          ActionCount
+          ThrillCount
+          DramaCount
+          horrorCount
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const deleteUserFriend = /* GraphQL */ `
+  mutation DeleteUserFriend(
+    $input: DeleteUserFriendInput!
+    $condition: ModelUserFriendConditionInput
+  ) {
+    deleteUserFriend(input: $input, condition: $condition) {
+      id
+      userID
+      friendUserID
+      name
+      email
+      mobileNo
       review {
         items {
           id

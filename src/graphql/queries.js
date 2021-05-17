@@ -8,27 +8,18 @@ export const getUser = /* GraphQL */ `
       name
       email
       mobileNo
-      friend {
-        id
-        name
-        email
-        mobileNo
-        friend {
+      userFriend {
+        items {
           id
+          userID
+          friendUserID
           name
           email
           mobileNo
           createdAt
           updatedAt
         }
-        review {
-          nextToken
-        }
-        movie {
-          nextToken
-        }
-        createdAt
-        updatedAt
+        nextToken
       }
       review {
         items {
@@ -95,14 +86,98 @@ export const listUsers = /* GraphQL */ `
         name
         email
         mobileNo
-        friend {
+        userFriend {
+          nextToken
+        }
+        review {
+          nextToken
+        }
+        movie {
+          nextToken
+        }
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;
+export const getUserFriend = /* GraphQL */ `
+  query GetUserFriend($id: ID!) {
+    getUserFriend(id: $id) {
+      id
+      userID
+      friendUserID
+      name
+      email
+      mobileNo
+      review {
+        items {
           id
-          name
-          email
-          mobileNo
+          userID
+          movieID
+          userName
+          reviewContent
+          rating
+          comedy
+          romance
+          Action
+          Thrill
+          Drama
+          horror
           createdAt
           updatedAt
         }
+        nextToken
+      }
+      movie {
+        items {
+          id
+          userID
+          name
+          imageUri
+          cast
+          language
+          releaseDate
+          aboutMovie
+          rating
+          comedy
+          romance
+          Action
+          Thrill
+          Drama
+          horror
+          ratingCount
+          comedyCount
+          romanceCount
+          ActionCount
+          ThrillCount
+          DramaCount
+          horrorCount
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const listUserFriends = /* GraphQL */ `
+  query ListUserFriends(
+    $filter: ModelUserFriendFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listUserFriends(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        userID
+        friendUserID
+        name
+        email
+        mobileNo
         review {
           nextToken
         }

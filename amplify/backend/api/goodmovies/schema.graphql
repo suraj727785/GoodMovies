@@ -3,9 +3,20 @@ type User @model {
   name: String!
   email: String!
   mobileNo:String!
-  friend:[User]
+  userFriend:[UserFriend] @connection(keyName: "byUser", fields: ["id"])
   review: [Review] @connection(keyName: "byUser", fields: ["id"])
   movie: [Movie] @connection(keyName: "byUser", fields: ["id"])
+}
+type UserFriend @model
+@key(name: "byUser", fields: ["userID", "id"])  {
+  id: ID!
+  userID:ID!
+  friendUserID:ID!
+  name: String!
+  email: String!
+  mobileNo:String!
+  review: [Review] @connection(keyName: "byUser", fields: ["friendUserID"])
+  movie: [Movie] @connection(keyName: "byUser", fields: ["friendUserID"])
 }
 type Movie @model 
 @key(name: "byUser", fields: ["userID", "id"]) {

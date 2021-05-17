@@ -8,27 +8,18 @@ export const onCreateUser = /* GraphQL */ `
       name
       email
       mobileNo
-      friend {
-        id
-        name
-        email
-        mobileNo
-        friend {
+      userFriend {
+        items {
           id
+          userID
+          friendUserID
           name
           email
           mobileNo
           createdAt
           updatedAt
         }
-        review {
-          nextToken
-        }
-        movie {
-          nextToken
-        }
-        createdAt
-        updatedAt
+        nextToken
       }
       review {
         items {
@@ -90,27 +81,18 @@ export const onUpdateUser = /* GraphQL */ `
       name
       email
       mobileNo
-      friend {
-        id
-        name
-        email
-        mobileNo
-        friend {
+      userFriend {
+        items {
           id
+          userID
+          friendUserID
           name
           email
           mobileNo
           createdAt
           updatedAt
         }
-        review {
-          nextToken
-        }
-        movie {
-          nextToken
-        }
-        createdAt
-        updatedAt
+        nextToken
       }
       review {
         items {
@@ -172,28 +154,205 @@ export const onDeleteUser = /* GraphQL */ `
       name
       email
       mobileNo
-      friend {
-        id
-        name
-        email
-        mobileNo
-        friend {
+      userFriend {
+        items {
           id
+          userID
+          friendUserID
           name
           email
           mobileNo
           createdAt
           updatedAt
         }
-        review {
-          nextToken
-        }
-        movie {
-          nextToken
-        }
-        createdAt
-        updatedAt
+        nextToken
       }
+      review {
+        items {
+          id
+          userID
+          movieID
+          userName
+          reviewContent
+          rating
+          comedy
+          romance
+          Action
+          Thrill
+          Drama
+          horror
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
+      movie {
+        items {
+          id
+          userID
+          name
+          imageUri
+          cast
+          language
+          releaseDate
+          aboutMovie
+          rating
+          comedy
+          romance
+          Action
+          Thrill
+          Drama
+          horror
+          ratingCount
+          comedyCount
+          romanceCount
+          ActionCount
+          ThrillCount
+          DramaCount
+          horrorCount
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onCreateUserFriend = /* GraphQL */ `
+  subscription OnCreateUserFriend {
+    onCreateUserFriend {
+      id
+      userID
+      friendUserID
+      name
+      email
+      mobileNo
+      review {
+        items {
+          id
+          userID
+          movieID
+          userName
+          reviewContent
+          rating
+          comedy
+          romance
+          Action
+          Thrill
+          Drama
+          horror
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
+      movie {
+        items {
+          id
+          userID
+          name
+          imageUri
+          cast
+          language
+          releaseDate
+          aboutMovie
+          rating
+          comedy
+          romance
+          Action
+          Thrill
+          Drama
+          horror
+          ratingCount
+          comedyCount
+          romanceCount
+          ActionCount
+          ThrillCount
+          DramaCount
+          horrorCount
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onUpdateUserFriend = /* GraphQL */ `
+  subscription OnUpdateUserFriend {
+    onUpdateUserFriend {
+      id
+      userID
+      friendUserID
+      name
+      email
+      mobileNo
+      review {
+        items {
+          id
+          userID
+          movieID
+          userName
+          reviewContent
+          rating
+          comedy
+          romance
+          Action
+          Thrill
+          Drama
+          horror
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
+      movie {
+        items {
+          id
+          userID
+          name
+          imageUri
+          cast
+          language
+          releaseDate
+          aboutMovie
+          rating
+          comedy
+          romance
+          Action
+          Thrill
+          Drama
+          horror
+          ratingCount
+          comedyCount
+          romanceCount
+          ActionCount
+          ThrillCount
+          DramaCount
+          horrorCount
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onDeleteUserFriend = /* GraphQL */ `
+  subscription OnDeleteUserFriend {
+    onDeleteUserFriend {
+      id
+      userID
+      friendUserID
+      name
+      email
+      mobileNo
       review {
         items {
           id

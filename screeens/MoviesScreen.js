@@ -51,7 +51,8 @@ const MoviesScreen = props=>{
           setMovies([...movies,newMovie]);
           setMovieList([...movies,newMovie]);
           }
-        });    
+        });
+        onRefresh();    
         return () => subscription.unsubscribe();
       }, [])
 
