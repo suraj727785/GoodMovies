@@ -76,7 +76,7 @@ const MoviesScreen = props=>{
       [
         {
           text: "Cancel",
-          onPress: () => console.log("Cancel Pressed"),
+          onPress: () => ("Cancel Pressed"),
           style: "cancel"
         },
         { text: "OK", onPress: () => props.navigation.navigate('MovieCreate') }
@@ -86,10 +86,12 @@ const MoviesScreen = props=>{
     const renderGridItem = (itemData)=>{
         const id = itemData.item.id; 
         return <MovieGridTitle  
+        id={itemData.item.id}
         title={itemData.item.name}
         image={itemData.item.imageUri}
         release_date={itemData.item.releaseDate}
         language={itemData.item.language}
+        overallRatingCount={itemData.item.ratingCount}
         overallRating={itemData.item.rating}
         onSelect={()=>{
             props.navigation.navigate('MovieDetails', { 

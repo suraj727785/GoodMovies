@@ -21,7 +21,6 @@ const RateAndReview = (props) =>{
         useEffect(()=>{
           const fetchUser= async () => {
         const userInfo = await Auth.currentAuthenticatedUser({bypassCache:true});
-        console.log(userInfo);
         setUserId(userInfo.attributes.sub);
         setUserName(userInfo.username);
         const movie = await API.graphql(

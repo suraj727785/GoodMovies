@@ -3,6 +3,7 @@ import {View,Text,ScrollView,StyleSheet,Image,TextInput, Button,Modal } from 're
 import {Rating} from 'react-native-elements';
 import {Auth,API,graphqlOperation,Storage } from 'aws-amplify';
 import {getMovie,listReviews} from '../src/graphql/queries';
+import {listUserFriends} from '../src/newQueries';
 import {onCreateReview} from '../src/graphql/subscriptions';
 import RateAndReview from '../components/RateAndReview';
 
@@ -13,12 +14,41 @@ const MovieDetailsScreen = props=>{
     const [modalVisible, setModalVisible] = useState(false);
     const [myReview,setMyReview]=useState(null);
     const [reviewList,setReviewList]=useState(null);
+    const [friendRating,setFriendRating]=useState({
+      rating:0,
+      count:0,
+    });
       useEffect(()=>{
         const fetchdata= async () => {
         const userInfo = await Auth.currentAuthenticatedUser({bypassCache:true});
         const movieData= await API.graphql(
           graphqlOperation(getMovie,{id: movieId})
         );
+
+        const userFriendData = await API.graphql(
+          graphqlOperation(
+            listUserFriends,{
+            filter: {userID: {contains: userInfo.attributes.sub}}
+            }
+          )
+        );
+        const userFriend=userFriendData.data.listUserFriends.items;
+        var rating=0,ratingCount=0;
+        for (var i=0;i<userFriend.length;i++){
+          for(var j=0;j<userFriend[i].review.items.length;j++){
+            if(userFriend[i].review.items[j].movieID===movieId){
+              rating+=userFriend[i].review.items[j].rating;
+              ratingCount+=1;
+            }
+          }
+        }
+        if(rating!==0){
+          rating=rating/ratingCount.toFixed(2);
+        }
+        setFriendRating({
+          rating:rating,
+          ratingCount:ratingCount
+        });
       // console.log(movieData.data.getMovie);
       setSelectedMovie(movieData.data.getMovie);
       let image='';
@@ -45,7 +75,6 @@ const MovieDetailsScreen = props=>{
         }
       })
       );
-      console.log(myReviewData.data.listReviews.items[0]);
       setMyReview(myReviewData.data.listReviews.items[0]);
       setReviewList(allReviewData.data.listReviews.items);
         }
@@ -108,7 +137,7 @@ const MovieDetailsScreen = props=>{
             <Text style={styles.ratingText}>Friends Rating: <Image 
             style={styles.ratingImage} 
             source={require('../assets/images/star-filled.png')} 
-            /> 7.8(5)</Text>
+            /> {friendRating.rating} ({friendRating.ratingCount})</Text>
         </View>
         <View style={styles.genreRatingsContainer}>
             <Text style={styles.genreRatingsTitle}>Ratings on different Genre:</Text>
