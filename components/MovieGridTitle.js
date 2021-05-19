@@ -4,8 +4,10 @@ import Card from './card';
 import {Storage} from 'aws-amplify';
 import {Auth,API,graphqlOperation } from 'aws-amplify';
 import {listUserFriends} from '../src/newQueries';
+import {getMovie} from '../src/graphql/queries';
 const MovieGridTitle =(props)=>{
     const [imageUri,setImageUri]=useState('');
+    const [movie,setMovie]=useState();
     const [friendRating,setFriendRating]=useState({
       rating:0,
       count:0,
@@ -16,12 +18,18 @@ const MovieGridTitle =(props)=>{
     }
     useEffect(()=>{
       const fetchImage= async () => {
+        const movieData=await API.graphql(
+          graphqlOperation(getMovie,{id: props.id})
+        );
+        const newMovieData=movieData.data.getMovie;
+        console.log(newMovieData);
+        setMovie(newMovieData);
       let image='';
-      if(props.image===''){
+      if(newMovieData.imageUri===''){
         image ='https://st2.depositphotos.com/3687485/9010/v/600/depositphotos_90102796-stock-illustration-cinema-film-clapper-board-vector.jpg';
       }
       else{
-        image=await Storage.get(props.image);
+        image=await Storage.get(newMovieData.imageUri);
       }
       setImageUri(image);
       
@@ -56,6 +64,10 @@ const MovieGridTitle =(props)=>{
     },[]);
 
     return <Card style={styles.product}>
+   {movie===undefined?
+        <View style={styles.imageContainer}>
+        <Image style={styles.image} source={{ uri: 'https://miro.medium.com/max/1080/0*DqHGYPBA-ANwsma2.gif' }} />
+        </View>:
         <TouchableCmp onPress={props.onSelect}>
       <View style={styles.touchable}>
           <View>
@@ -63,14 +75,72 @@ const MovieGridTitle =(props)=>{
               <Image style={styles.image} source={{ uri: imageUri }} />
             </View>
             <View style={styles.details}>
-              <Text style={styles.title}>{props.title}</Text>
-              <Text style={styles.ratingText}>Overall Rating: <Image style={styles.ratingImage} source={require('../assets/images/star-filled.png')} />{props.overallRating} ({props.overallRatingCount})</Text>
-              <Text style={styles.ratingText}>Friends Rating: <Image style={styles.ratingImage} source={require('../assets/images/star-filled.png')} /> {friendRating.rating} ({friendRating.ratingCount})</Text>            
+              <Text style={styles.title}>{movie.name}</Text>
+              <Text style={styles.ratingText}>Overall Rating: <Image style={styles.ratingImage} source={require('../assets/images/star-filled.png')} />{movie.rating} ({movie.ratingCount})</Text>
+
+              {
+              props.sortBy==='Comedy'?
+              <Text 
+              style={styles.ratingText}
+              >Comedy: <Image 
+               style={styles.ratingImage} 
+               source={require('../assets/images/star-filled.png')} 
+               /> {movie.comedy} ({movie.comedyCount})
+               </Text>:
+               props.sortBy==='Romance'?
+               <Text 
+               style={styles.ratingText}
+               >Romance: <Image 
+                style={styles.ratingImage} 
+                source={require('../assets/images/star-filled.png')} 
+                /> {movie.romance} ({movie.romanceCount})
+                </Text>:
+                props.sortBy==='Action'?
+                <Text 
+                style={styles.ratingText}
+                >Action: <Image 
+                 style={styles.ratingImage} 
+                 source={require('../assets/images/star-filled.png')} 
+                 /> {movie.Action} ({movie.ActionCount})
+                 </Text>:
+                 props.sortBy==='Drama'?
+                 <Text 
+                 style={styles.ratingText}
+                 >Drama: <Image 
+                  style={styles.ratingImage} 
+                  source={require('../assets/images/star-filled.png')} 
+                  /> {movie.Drama} ({movie.DramaCount})
+                  </Text>:
+                  props.sortBy==='Thrill'?
+                  <Text 
+                  style={styles.ratingText}
+                  >Thrill: <Image 
+                   style={styles.ratingImage} 
+                   source={require('../assets/images/star-filled.png')} 
+                   />{movie.Thrill} ({movie.ThrillCount})
+                   </Text>:
+                   props.sortBy==='Horror'?
+                   <Text 
+                   style={styles.ratingText}
+                   >Horror: <Image 
+                    style={styles.ratingImage} 
+                    source={require('../assets/images/star-filled.png')} 
+                    /> {movie.horror} ({movie.horrorCount})
+                    </Text>:
+                    <Text 
+                    style={styles.ratingText}
+                    >Friends Rating: <Image 
+                     style={styles.ratingImage} 
+                     source={require('../assets/images/star-filled.png')} 
+                     /> {friendRating.rating} ({friendRating.ratingCount})
+                     </Text>
+               }      
             </View>
           </View>
         
       </View>
       </TouchableCmp>
+    }
     </Card>
     ;
 

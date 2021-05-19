@@ -1,5 +1,5 @@
 import React,{useEffect, useState,useCallback} from 'react';
-import {View,StyleSheet,FlatList,ScrollView,RefreshControl} from 'react-native';
+import {View,Text,StyleSheet,FlatList,ScrollView,RefreshControl,Image} from 'react-native';
 import FriendListItem from '../components/FriendListItem'; 
 import * as Contacts from 'expo-contacts'; 
 import {API,Auth,graphqlOperation} from 'aws-amplify';
@@ -109,6 +109,14 @@ const AddFriendsScreen=()=>{
           onRefresh={onRefresh}
           />
         } >
+        {
+        users===undefined?
+        <Image style={{width:500,height:400}} source={{ uri: 'https://miro.medium.com/max/1080/0*DqHGYPBA-ANwsma2.gif' }} />:
+        users.length===0?
+        <View style={styles.noFriendsShowView}>
+          <Text style={{fontSize:16}}>You already added all your contacts who are here...</Text>
+          <Text style={{fontSize:16}}>Please tell more contacts to join GoodMovies</Text>
+        </View>:
         <FlatList
         style={{width:'100%'}}
          keyExtractor={users=>users.id}
@@ -124,6 +132,7 @@ const AddFriendsScreen=()=>{
              onAddFriend={onRefresh}
               />
          }}/>
+        }
          </ScrollView>
     )
 };

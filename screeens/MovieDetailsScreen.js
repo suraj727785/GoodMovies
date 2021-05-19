@@ -96,9 +96,6 @@ const MovieDetailsScreen = props=>{
 
    return(
     <ScrollView>
-      {
-        selectedMovie==null?<Image source={{uri: 'https://miro.medium.com/max/880/0*H3jZONKqRuAAeHnG.jpg'}} style={styles.loadingImage}/> 
-    :<View>
     <Modal
     animationType="slide"
     transparent={false}
@@ -110,6 +107,12 @@ const MovieDetailsScreen = props=>{
     movieId={movieId}
     onChangeVisible={()=>{setModalVisible(!modalVisible);}}/>
      </Modal>
+     {
+        selectedMovie===undefined?
+        <View style={{alignItems:'center',justifyContent:'center',flex:1}}>
+        <Image style={{width:500,height:400,marginTop:150}} source={{ uri: 'https://miro.medium.com/max/1080/0*DqHGYPBA-ANwsma2.gif' }} /> 
+        </View>:
+    <View>
     <Image source={{uri: imageUri}} style={styles.image}/>
     <View>
          <Text style={styles.title}>{selectedMovie.name}</Text>
@@ -301,12 +304,6 @@ const styles =StyleSheet.create({
       },
       reviewText:{
         fontSize:15,
-      },
-      loadingImage:{
-        height:'100%',
-        width:'100%',
-        alignSelf:'center',
-        justifyContent:'center'
       },
       rateAndReviewContainer:{
         marginBottom:10,

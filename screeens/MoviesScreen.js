@@ -14,6 +14,7 @@ const wait = (timeout) => {
   return new Promise(resolve => setTimeout(resolve, timeout));
 }
 const MoviesScreen = props=>{
+   
     const [sortBy,setSortBy]=useState('');
     const [search,setSearch]=useState('');
     const [movies,setMovies]=useState([]);
@@ -82,17 +83,30 @@ const MoviesScreen = props=>{
         { text: "OK", onPress: () => props.navigation.navigate('MovieCreate') }
       ]
     );
-   
+    const sortMovies=(li,crieteria)=>{
+      switch(crieteria) {
+        case "Drama":
+          return li.sort((a, b) => b.Drama - a.Drama);
+        case "Comedy":
+          return li.sort((a, b) => b.comedy - a.comedy);
+        case "Romance":
+          return li.sort((a, b) => b.romance - a.romance);
+        case "Action":
+          return li.sort((a, b) => b.Action - a.Action);
+        case "Thrill":
+          return li.sort((a, b) => b.Thrill - a.Thrill);
+        case "Horror":
+          return li.sort((a, b) => b.horror - a.horror);
+        default:
+          return li.sort((a, b) => b.rating - a.rating)
+      }
+      return li.sort((a, b) => b.rating - a.rating) 
+    }
     const renderGridItem = (itemData)=>{
         const id = itemData.item.id; 
         return <MovieGridTitle  
         id={itemData.item.id}
-        title={itemData.item.name}
-        image={itemData.item.imageUri}
-        release_date={itemData.item.releaseDate}
-        language={itemData.item.language}
-        overallRatingCount={itemData.item.ratingCount}
-        overallRating={itemData.item.rating}
+        sortBy={sortBy}
         onSelect={()=>{
             props.navigation.navigate('MovieDetails', { 
                 movieId: id
@@ -103,12 +117,14 @@ const MoviesScreen = props=>{
     };
    return(
        <ScrollView
+       contentContainerStyle={{flex:1}}
        refreshControl={
         <RefreshControl
           refreshing={refreshing}
           onRefresh={onRefresh}
         />
-      } >
+      } > 
+       <View>
          <View style={{flexDirection:'row'}}>
             <Picker
               mode="dropdown"
@@ -116,18 +132,17 @@ const MoviesScreen = props=>{
               placeholderStyle={{ color: "#2874F0" }}
               note={false}
               selectedValue={sortBy}
-              onValueChange={(selectedSortBy)=>{setSortBy(selectedSortBy)}}
+              onValueChange={(val)=>{setSortBy(val)}}
               style={{ width: 180,height:50,fontSize:10,color:'black' }}
               itemStyle={{  width: 180,fontSize: 18}}>
-            <Picker.Item label="Sort By" value="" />
-            <Picker.Item label="Overall Rating" value="Overall" />
-            <Picker.Item label="Friends Rating" value="Friends" />
+            <Picker.Item label="Sort By" value="Nothing" />
+            <Picker.Item label="Overall Rating" value="Simple" />
             <Picker.Item label="Comedy " value="Comedy" />
             <Picker.Item label="Drama " value="Drama" />
             <Picker.Item label="Romance " value="Romance" />
             <Picker.Item label="Action " value="Action" /> 
             <Picker.Item label="Thrill " value="Thrill" />
-            <Picker.Item label="Horror " value="Horror" />  
+            <Picker.Item label="Horror " value="Horror" />
           </Picker>
           <SearchBar
             lightTheme={true}
@@ -141,11 +156,11 @@ const MoviesScreen = props=>{
        style={styles.flatListStyle}
        numColumns={2}
        keyExtractor={(item,index)=>item.id}
-       data={movies} 
+       data={sortMovies(movies,sortBy)} 
        renderItem={renderGridItem}
-       />
+       /></View>
        <View style={styles.addIcon}>
-       <Ionicons name='ios-add-circle' size={72} color="grey" 
+       <Ionicons style={styles.addIcon} name='ios-add-circle' size={72} color="grey" 
        onPress={createTwoButtonAlert}
        />
        </View>
@@ -167,9 +182,9 @@ MoviesScreen.navigationOptions = navData => {
 
 const styles=StyleSheet.create({
     addIcon:{
-        alignSelf:'center',
-        position:'absolute',
-        bottom:60,
+      alignSelf: 'center',
+      position: 'absolute',
+      bottom:0
     },
     flatListStyle:{
       marginBottom:70
