@@ -1,23 +1,28 @@
 import React,{useState,useEffect} from 'react';
-import {View,Text,ScrollView,StyleSheet,Image,TextInput, Button,Modal } from 'react-native';
+import {View,Text,ScrollView,StyleSheet,Image,Button,Modal } from 'react-native';
 import {Rating} from 'react-native-elements';
+import { FontAwesome } from '@expo/vector-icons';
 import {Auth,API,graphqlOperation,Storage } from 'aws-amplify';
 import {getMovie,listReviews} from '../src/graphql/queries';
 import {listUserFriends} from '../src/newQueries';
-import {onCreateReview} from '../src/graphql/subscriptions';
+import {onCreateReview, onDeleteReview, onUpdateMovie, onUpdateReview} from '../src/graphql/subscriptions';
 import RateAndReview from '../components/RateAndReview';
+import EditRateAndReview from '../components/EditRateAndReview';
+
 
 const MovieDetailsScreen = props=>{
     const movieId = props.navigation.getParam('movieId');
     const [selectedMovie,setSelectedMovie] = useState();
     const [imageUri,setImageUri] = useState('');
-    const [modalVisible, setModalVisible] = useState(false);
+    const [addReviewModal, setAddReviewModal] = useState(false);
+    const [editReviewModal, setEditReviewModal] = useState(false);
     const [myReview,setMyReview]=useState(null);
     const [reviewList,setReviewList]=useState(null);
     const [friendRating,setFriendRating]=useState({
       rating:0,
       count:0,
     });
+    const [myReviewId,setMyReviewId]=useState('');
       useEffect(()=>{
         const fetchdata= async () => {
         const userInfo = await Auth.currentAuthenticatedUser({bypassCache:true});
@@ -43,7 +48,7 @@ const MovieDetailsScreen = props=>{
           }
         }
         if(rating!==0){
-          rating=rating/ratingCount.toFixed(2);
+          rating=(rating/ratingCount).toFixed(2);
         }
         setFriendRating({
           rating:rating,
@@ -77,10 +82,23 @@ const MovieDetailsScreen = props=>{
       );
       setMyReview(myReviewData.data.listReviews.items[0]);
       setReviewList(allReviewData.data.listReviews.items);
+      if(myReviewData.data.listReviews.items.length>0){
+        setMyReviewId(myReviewData.data.listReviews.items[0].id);
+      }
         }
         fetchdata();
       },[]);
-      
+      useEffect(() => {
+        const subscription = API.graphql(
+          graphqlOperation(onUpdateMovie)
+        ).subscribe({
+          next: (data) => {
+            const updatedMovie = data.value.data.onUpdateMovie;
+          setSelectedMovie(updatedMovie);
+          }
+        });
+        return () => subscription.unsubscribe();
+      }, []);
       useEffect(() => {
         const subscription = API.graphql(
           graphqlOperation(onCreateReview)
@@ -90,22 +108,54 @@ const MovieDetailsScreen = props=>{
           setMyReview(newReview);
           }
         });
-    
         return () => subscription.unsubscribe();
-      }, [])
+      }, []);
+      useEffect(() => {
+        const subscription = API.graphql(
+          graphqlOperation(onUpdateReview)
+        ).subscribe({
+          next: (data) => {
+            const newReview = data.value.data.onUpdateReview;
+          setMyReview(newReview);
+          }
+        });
+        return () => subscription.unsubscribe();
+      }, []);
+      useEffect(() => {
+        const subscription = API.graphql(
+          graphqlOperation(onDeleteReview)
+        ).subscribe({
+          next: (data) => {
+          setMyReview();
+          }
+        });
+        return () => subscription.unsubscribe();
+      }, []);
 
    return(
     <ScrollView>
     <Modal
     animationType="slide"
     transparent={false}
-    visible={modalVisible}
+    visible={addReviewModal}
     onRequestClose={() => {
-      setModalVisible(!modalVisible);
+      setAddReviewModal(!addReviewModal);
     }}>
     <RateAndReview 
     movieId={movieId}
-    onChangeVisible={()=>{setModalVisible(!modalVisible);}}/>
+    onChangeVisible={()=>{setAddReviewModal(!addReviewModal);}}/>
+     </Modal>
+     <Modal
+    animationType="slide"
+    transparent={false}
+    visible={editReviewModal}
+    onRequestClose={() => {
+      setEditReviewModal(!editReviewModal);
+    }}>
+    <EditRateAndReview
+    movieId={movieId}
+    reviewId={myReviewId}
+    onChangeVisible={()=>{setEditReviewModal(!editReviewModal);}}/>
      </Modal>
      {
         selectedMovie===undefined?
@@ -169,12 +219,12 @@ const MovieDetailsScreen = props=>{
             source={require('../assets/images/star-filled.png')} 
             /> {selectedMovie.horror}({selectedMovie.horrorCount})</Text>
         </View>
+        <Text style={styles.rateAndReviewTitle}>Rate and Review</Text>
         {myReview===null || myReview===undefined ? <View style={styles.rateAndReviewContainer}>
-            <Text style={styles.rateAndReviewTitle}>Rate and Review</Text>
             <View style={styles.submitButtonContainer}>
               <Button 
               style={styles.submitButton}
-              onPress={()=>{setModalVisible(!modalVisible);}}
+              onPress={()=>{setAddReviewModal(!addReviewModal);}}
               title="Give Ratings and Review"
               color="#841584"
               accessibilityLabel="Submit Review"/>
@@ -182,7 +232,7 @@ const MovieDetailsScreen = props=>{
         </View>:
         <View style={styles.reviewContainer}>
         <View style={styles.ratingDisplayContainer}>
-          <Text style={styles.ratingDisplayTitle}>My Review</Text>
+          <Text style={styles.ratingDisplayTitle}>My Review <FontAwesome onPress={()=>{setEditReviewModal(!editReviewModal);}} style={{marginLeft:5}} name="edit" size={20} color="#4a148c" /></Text>
             <Rating readonly type='custom' tintColor="#e4ebed" style={{marginTop:8}} ratingCount={10} startingValue={myReview.rating} imageSize={26}/>
          </View>
          <Text style={styles.reviewText}>{myReview.reviewContent}</Text>
@@ -284,11 +334,10 @@ const styles =StyleSheet.create({
 
       reviewContainer:{
         padding:10,
-        marginTop:15,
         borderRadius:5,
         width:"93%",
         borderColor:'black',
-        borderTopWidth:0.7,
+        borderBottomWidth:0.7,
         alignSelf:'center'
       },
       ratingDisplayContainer:{
@@ -311,7 +360,8 @@ const styles =StyleSheet.create({
       },
       rateAndReviewTitle:{
           fontSize:18,
-          
+          marginLeft:20,
+          fontWeight:'bold'
       },
       submitButtonContainer:{
         marginTop:10,
@@ -323,6 +373,10 @@ const styles =StyleSheet.create({
         borderRadius:30,
         marginRight:30
       },
+      editMovieContainer:{
+        flexDirection:'row',
+        justifyContent:'space-between'
+      }
     });
 
 

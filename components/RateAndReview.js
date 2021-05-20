@@ -64,7 +64,7 @@ const RateAndReview = (props) =>{
       movieDetails.horrorCount=movieDetails.horrorCount+1;
     }
     if(rating!==0){
-      movieDetails.rating=((movieDetails.rating*movieDetails.ratingCount)+comedy)/(movieDetails.ratingCount+1);
+      movieDetails.rating=((movieDetails.rating*movieDetails.ratingCount)+rating)/(movieDetails.ratingCount+1);
       movieDetails.rating=movieDetails.rating.toFixed(2);
       movieDetails.ratingCount=movieDetails.ratingCount+1;
     }

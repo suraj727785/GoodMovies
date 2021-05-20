@@ -54,7 +54,7 @@ const MovieGridTitle =(props)=>{
         }
       }
       if(rating!==0){
-        rating=rating/ratingCount.toFixed(2);
+        rating=(rating/ratingCount).toFixed(2);
       }
       setFriendRating({
         rating:rating,

@@ -71,10 +71,10 @@ const MoviesScreen = props=>{
       }
 
     }
-    const createTwoButtonAlert = () =>
+    const addMovieAlert = () =>
     Alert.alert(
       "Add a movie",
-      "want to add a movie",
+      "want to add a movie?",
       [
         {
           text: "Cancel",
@@ -128,6 +128,36 @@ const MoviesScreen = props=>{
             ));
       }
     }
+    const onClickEditAlert=(id)=>{
+      Alert.alert(
+        "Edit movie",
+        "want to Edit this movie?",
+        [
+          {
+            text: "Cancel",
+            onPress: () => ("Cancel Pressed"),
+            style: "cancel"
+          },
+          { text: "OK", onPress: () => props.navigation.navigate('MovieEdit', { 
+            movieId: id
+          }) }
+        ]
+      );
+    };
+    const onClickDeleteAlert=(id)=>{
+      Alert.alert(
+        "Delete movie",
+        "Want to delete this movie?",
+        [
+          {
+            text: "Cancel",
+            onPress: () => ("Cancel Pressed"),
+            style: "cancel"
+          },
+          { text: "OK", onPress: () => deleteMovieFun(id) }
+        ]
+      );  
+    }
     const renderGridItem = (itemData)=>{
         const id = itemData.item.id; 
         return <MovieGridTitle  
@@ -138,12 +168,8 @@ const MoviesScreen = props=>{
                 movieId: id
               });
            }}
-        onClickEdit={(id)=>{
-          props.navigation.navigate('MovieEdit', { 
-              movieId: id
-            });
-         }}
-        onClickDelete={(id)=>{deleteMovieFun(id)}}
+        onClickEdit={(id)=>{onClickEditAlert(id);}}
+        onClickDelete={(id)=>{onClickDeleteAlert(id);}}
         />;
     
     };
@@ -194,7 +220,7 @@ const MoviesScreen = props=>{
        </ScrollView >
        <View style={styles.addIcon}>
        <Ionicons style={styles.addIcon} name='ios-add-circle' size={72} color="grey" 
-       onPress={createTwoButtonAlert}
+       onPress={addMovieAlert}
        />
        </View>
        </View>
