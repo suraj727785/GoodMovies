@@ -7,7 +7,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { Picker } from "native-base";
 import { SearchBar } from 'react-native-elements';
 import {API,graphqlOperation } from 'aws-amplify';
-import {listMovies} from '../src/graphql/queries';
+import {listMovies, listReviews} from '../src/graphql/queries';
+import {deleteMovie, deleteReview} from '../src/graphql/mutations';
 import {onCreateMovie} from '../src/graphql/subscriptions';
 
 const wait = (timeout) => {
@@ -98,9 +99,34 @@ const MoviesScreen = props=>{
         case "Horror":
           return li.sort((a, b) => b.horror - a.horror);
         default:
-          return li.sort((a, b) => b.rating - a.rating)
+          return li.sort((a, b) => b.rating - a.rating);
       }
-      return li.sort((a, b) => b.rating - a.rating) 
+    }
+    const deleteMovieFun =async(id)=>{
+      await API.graphql(
+        graphqlOperation(deleteMovie,
+          {input:{id: id}
+        })
+      );
+      await API.graphql(
+        graphqlOperation(deleteMovie,
+          {input:{id: id}
+        })
+      );
+      const reviewData= await API.graphql(
+        graphqlOperation(listReviews,{
+          filter: 
+            {movieID: {contains: id}}
+        }));
+      const reviewList=reviewData.data.listReviews.items;
+      let reviewCount=reviewList.length;
+      let i=0;
+      while(i<reviewCount){
+        await API.graphql(
+          graphqlOperation(deleteReview,
+            {input:{id: reviewList[i].id}}
+            ));
+      }
     }
     const renderGridItem = (itemData)=>{
         const id = itemData.item.id; 
@@ -112,19 +138,17 @@ const MoviesScreen = props=>{
                 movieId: id
               });
            }}
+        onClickEdit={(id)=>{
+          props.navigation.navigate('MovieEdit', { 
+              movieId: id
+            });
+         }}
+        onClickDelete={(id)=>{deleteMovieFun(id)}}
         />;
     
     };
    return(
-       <ScrollView
-       contentContainerStyle={{flex:1}}
-       refreshControl={
-        <RefreshControl
-          refreshing={refreshing}
-          onRefresh={onRefresh}
-        />
-      } > 
-       <View>
+       <View style={{flex:1}}>
          <View style={{flexDirection:'row'}}>
             <Picker
               mode="dropdown"
@@ -133,7 +157,7 @@ const MoviesScreen = props=>{
               note={false}
               selectedValue={sortBy}
               onValueChange={(val)=>{setSortBy(val)}}
-              style={{ width: 180,height:50,fontSize:10,color:'black' }}
+              style={{ width: 180,height:50,fontSize:10,color:'black',marginTop:7 }}
               itemStyle={{  width: 180,fontSize: 18}}>
             <Picker.Item label="Sort By" value="Nothing" />
             <Picker.Item label="Overall Rating" value="Simple" />
@@ -146,25 +170,34 @@ const MoviesScreen = props=>{
           </Picker>
           <SearchBar
             lightTheme={true}
-            containerStyle={{width:'50%',height:60,marginTop:0}}
+            containerStyle={{width:'50%',height:60,marginTop:7}}
             placeholder="Search Movies"
             onChangeText={(searchText)=>{searchMovies(searchText)}}
             value={search}
           />
          </View>
+         <ScrollView
+         refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
+        } >
        <FlatList
        style={styles.flatListStyle}
        numColumns={2}
        keyExtractor={(item,index)=>item.id}
        data={sortMovies(movies,sortBy)} 
        renderItem={renderGridItem}
-       /></View>
+       />
+       
+       </ScrollView >
        <View style={styles.addIcon}>
        <Ionicons style={styles.addIcon} name='ios-add-circle' size={72} color="grey" 
        onPress={createTwoButtonAlert}
        />
        </View>
-       </ScrollView >
+       </View>
    );
 
 };
@@ -187,7 +220,7 @@ const styles=StyleSheet.create({
       bottom:0
     },
     flatListStyle:{
-      marginBottom:70
+      marginBottom:20,
     }
 })
 

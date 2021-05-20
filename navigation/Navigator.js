@@ -5,6 +5,7 @@ import {createAppContainer,createSwitchNavigator} from 'react-navigation';
 import MoviesScreen from '../screeens/MoviesScreen';
 import MovieDetailsScreen from '../screeens/MovieDetailsScreen';
 import MovieCreateScreen from '../screeens/MovieCreateScreen';
+import MovieEditScreen from '../screeens/MovieEditScreen';
 import ViewFriendsScreen from '../screeens/ViewFriendsScreen';
 import AddFriendsScreen from '../screeens/AddFriendsScreen';
 import ViewProfileScreen from '../screeens/ViewProfileScreen';
@@ -35,6 +36,12 @@ const Navigator = createStackNavigator({
         screen:MovieCreateScreen ,
         navigationOptions:{
             headerTitle:'Create New Movie'
+        } 
+    },
+    MovieEdit:{
+        screen:MovieEditScreen ,
+        navigationOptions:{
+            headerTitle:'Edit Movie'
         } 
     },
     ViewFriend:{

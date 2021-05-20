@@ -1,11 +1,13 @@
 import React,{useEffect,useState} from 'react';
-import {Text,View,StyleSheet,TouchableOpacity,Platform, TouchableNativeFeedback,Image} from 'react-native';
+import {Text,View,StyleSheet,TouchableOpacity,Platform, TouchableNativeFeedback,Image,ImageBackground} from 'react-native';
 import Card from './card';
+import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
 import {Storage} from 'aws-amplify';
 import {Auth,API,graphqlOperation } from 'aws-amplify';
 import {listUserFriends} from '../src/newQueries';
 import {getMovie} from '../src/graphql/queries';
 const MovieGridTitle =(props)=>{
+    const [userId,setUserId]=useState('');
     const [imageUri,setImageUri]=useState('');
     const [movie,setMovie]=useState();
     const [friendRating,setFriendRating]=useState({
@@ -22,7 +24,6 @@ const MovieGridTitle =(props)=>{
           graphqlOperation(getMovie,{id: props.id})
         );
         const newMovieData=movieData.data.getMovie;
-        console.log(newMovieData);
         setMovie(newMovieData);
       let image='';
       if(newMovieData.imageUri===''){
@@ -41,6 +42,7 @@ const MovieGridTitle =(props)=>{
           }
         )
       );
+      setUserId(userInfo.attributes.sub);
       const userFriend=userFriendData.data.listUserFriends.items;
       var rating=0,ratingCount=0;
       for (var i=0;i<userFriend.length;i++){
@@ -72,7 +74,13 @@ const MovieGridTitle =(props)=>{
       <View style={styles.touchable}>
           <View>
             <View style={styles.imageContainer}>
-              <Image style={styles.image} source={{ uri: imageUri }} />
+              <ImageBackground style={styles.image} source={{ uri: imageUri }} />
+              {userId===movie.userID && 
+              <View style={styles.editMovieContainer}>
+                <FontAwesome onPress={()=>{props.onClickEdit(props.id)}} style={{marginLeft:5}} name="edit" size={35} color="#4a148c" />
+                <MaterialIcons onPress={()=>{props.onClickDelete(props.id)}} style={{marginLeft:110}}  name="delete" size={35} color="#4a148c" />
+             </View>
+             }
             </View>
             <View style={styles.details}>
               <Text style={styles.title}>{movie.name}</Text>
@@ -167,6 +175,7 @@ const styles = StyleSheet.create({
       overflow: 'hidden'
     },
     image: {
+      position: 'relative',
       width: '100%',
       height: '100%'
     },
@@ -190,6 +199,12 @@ const styles = StyleSheet.create({
       fontSize: 14,
       marginLeft:5,
       alignSelf:'flex-start'
+    },
+    editMovieContainer:{
+      position:'absolute',
+      flex:1,
+      flexDirection:'row',
+      justifyContent:'space-between'
     }
   });
 
