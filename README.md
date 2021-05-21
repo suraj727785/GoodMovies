@@ -1,2 +1,3 @@
 # GoodMovies
-This is a movie rating mobile application. In this app users can add different movies and give ratings and reviews on different movies. Users can also add friends from their contact who have created an account and get to how much their friends rated different movies
+This is a movie rating mobile application. In this app users can add different movies and give ratings and reviews on different movies. Users can also add friends from their contact who have created an account and get to how much their friends rated different movies.
+Users can also sort movies based on different genre ratings.This app has a unique friend rating feature where you'll get to know how rating your friends have given on different movies. Users can simply add friends from their contact who already using GoodMovies and also remove friends the friends rating will depends on how many of your friend given ratings to different movies.
