@@ -29,6 +29,7 @@ function App(){
               name:userInfo.username,
               email:userInfo.attributes.email,
               mobileNo:userInfo.attributes.phone_number,
+              imageUri:''
             }
     
            await API.graphql(graphqlOperation(

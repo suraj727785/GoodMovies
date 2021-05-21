@@ -25,6 +25,7 @@
     "expo-image-picker": "^9.2.1",
     "expo-linear-gradient": "~8.4.0",
     "link": "^0.1.5",
+    "moment": "^2.29.1",
     "native-base": "^2.15.2",
     "react": "16.13.1",
     "react-dom": "16.13.1",

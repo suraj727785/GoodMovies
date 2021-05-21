@@ -3,6 +3,7 @@ type User @model {
   name: String!
   email: String!
   mobileNo:String!
+  imageUri:String
   userFriend:[UserFriend] @connection(keyName: "byUser", fields: ["id"])
   review: [Review] @connection(keyName: "byUser", fields: ["id"])
   movie: [Movie] @connection(keyName: "byUser", fields: ["id"])
@@ -15,6 +16,7 @@ type UserFriend @model
   name: String!
   email: String!
   mobileNo:String!
+  imageUri:String
   review: [Review] @connection(keyName: "byUser", fields: ["friendUserID"])
   movie: [Movie] @connection(keyName: "byUser", fields: ["friendUserID"])
 }

@@ -8,6 +8,7 @@ export const onCreateUser = /* GraphQL */ `
       name
       email
       mobileNo
+      imageUri
       userFriend {
         items {
           id
@@ -16,6 +17,7 @@ export const onCreateUser = /* GraphQL */ `
           name
           email
           mobileNo
+          imageUri
           createdAt
           updatedAt
         }
@@ -81,6 +83,7 @@ export const onUpdateUser = /* GraphQL */ `
       name
       email
       mobileNo
+      imageUri
       userFriend {
         items {
           id
@@ -89,6 +92,7 @@ export const onUpdateUser = /* GraphQL */ `
           name
           email
           mobileNo
+          imageUri
           createdAt
           updatedAt
         }
@@ -154,6 +158,7 @@ export const onDeleteUser = /* GraphQL */ `
       name
       email
       mobileNo
+      imageUri
       userFriend {
         items {
           id
@@ -162,6 +167,7 @@ export const onDeleteUser = /* GraphQL */ `
           name
           email
           mobileNo
+          imageUri
           createdAt
           updatedAt
         }
@@ -229,6 +235,7 @@ export const onCreateUserFriend = /* GraphQL */ `
       name
       email
       mobileNo
+      imageUri
       review {
         items {
           id
@@ -291,6 +298,7 @@ export const onUpdateUserFriend = /* GraphQL */ `
       name
       email
       mobileNo
+      imageUri
       review {
         items {
           id
@@ -353,6 +361,7 @@ export const onDeleteUserFriend = /* GraphQL */ `
       name
       email
       mobileNo
+      imageUri
       review {
         items {
           id

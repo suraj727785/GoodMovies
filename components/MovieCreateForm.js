@@ -9,7 +9,7 @@ import {createMovie} from '../src/graphql/mutations';
 
 
 const MovieCreateForm=(props)=>{
-    const [date, setDate] = useState(new Date(1598051730000));
+    const [date, setDate] = useState(new Date());
     const [image,setImage]=useState(null);
     const [name,setName]=useState('');
     const [language,setLanguage]=useState('');

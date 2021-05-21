@@ -1,20 +1,24 @@
 import React, { useState,useEffect} from 'react';
 import {Text,View,StyleSheet, Image,TouchableWithoutFeedback} from 'react-native';
 import { Entypo } from '@expo/vector-icons';
-import { Auth,API,graphqlOperation } from 'aws-amplify';
+import { Auth,API,graphqlOperation,Storage } from 'aws-amplify';
 import { createUserFriend,deleteUserFriend } from '../src/graphql/mutations';
 import {onCreateUserFriend,onDeleteUserFriend} from '../src/graphql/subscriptions';
-import { listUserFriends } from '../src/graphql/queries';
 
 
 
 const FriendsListItem = (props) =>{
     const [userId,setUserId]=useState('');
+    const [image,setImage]=useState('https://cdn.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png');
     try{
         useEffect(()=>{
           const fetchUser= async () => {
             const userInfo = await Auth.currentAuthenticatedUser({bypassCache:true});   
-            setUserId(userInfo.attributes.sub)     
+            setUserId(userInfo.attributes.sub);
+            if(props.imageUri!==''){
+            const imageUri= await Storage.get(props.imageUri);
+            setImage(imageUri);
+            }
           }
           fetchUser();
         },[]);
@@ -51,7 +55,8 @@ const FriendsListItem = (props) =>{
                         friendUserID:props.id,
                         name:props.name,
                         email:props.email,
-                        mobileNo:props.mobileNo
+                        mobileNo:props.mobileNo,
+                        imageUri:props.imageUri
                     }
                 }
             )
@@ -74,9 +79,10 @@ const FriendsListItem = (props) =>{
         <TouchableWithoutFeedback>
             <View style={styles.container}>
             <View style={styles.leftContainer}>
-                <Image source={{uri:props.imageUri}} style={styles.avatar}/>
+                <Image source={{uri:image}} style={styles.avatar}/>
                 <View style={styles.midContainer}>
                     <Text style={styles.username}>{props.name}</Text>
+                    <Text numberOfLines={2} style={styles.mobileNo}>{props.mobileNo}</Text>
                 </View>
             </View>
             <View>
@@ -117,7 +123,7 @@ const styles=StyleSheet.create({
         marginHorizontal:15,
         borderRadius: 25,
     },
-    status:{
+    mobileNo:{
         fontSize:14,
         color:'grey',
     },

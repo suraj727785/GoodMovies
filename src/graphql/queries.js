@@ -8,6 +8,7 @@ export const getUser = /* GraphQL */ `
       name
       email
       mobileNo
+      imageUri
       userFriend {
         items {
           id
@@ -16,6 +17,7 @@ export const getUser = /* GraphQL */ `
           name
           email
           mobileNo
+          imageUri
           createdAt
           updatedAt
         }
@@ -86,6 +88,7 @@ export const listUsers = /* GraphQL */ `
         name
         email
         mobileNo
+        imageUri
         userFriend {
           nextToken
         }
@@ -111,6 +114,7 @@ export const getUserFriend = /* GraphQL */ `
       name
       email
       mobileNo
+      imageUri
       review {
         items {
           id
@@ -178,6 +182,7 @@ export const listUserFriends = /* GraphQL */ `
         name
         email
         mobileNo
+        imageUri
         review {
           nextToken
         }

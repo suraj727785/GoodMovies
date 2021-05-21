@@ -8,6 +8,7 @@ import {listUserFriends} from '../src/newQueries';
 import {onCreateReview, onDeleteReview, onUpdateMovie, onUpdateReview} from '../src/graphql/subscriptions';
 import RateAndReview from '../components/RateAndReview';
 import EditRateAndReview from '../components/EditRateAndReview';
+import moment from 'moment';
 
 
 const MovieDetailsScreen = props=>{
@@ -168,7 +169,7 @@ const MovieDetailsScreen = props=>{
          <Text style={styles.title}>{selectedMovie.name}</Text>
         <View style={styles.detailsContainer}>
             <Text style={styles.detailsTitle}>Release Date:</Text>
-            <Text style={styles.detailsVal}>{selectedMovie.releaseDate}</Text>
+            <Text style={styles.detailsVal}>{moment(selectedMovie.releaseDate).format(" DD-MMM-YYYY")}</Text>
         </View>
         <View style={styles.detailsContainer}>
             <Text style={styles.detailsTitle}>Language:</Text>
@@ -302,7 +303,7 @@ const styles =StyleSheet.create({
           flexDirection:'row',
           alignSelf:'flex-start',
           marginLeft:10,
-          marginBottom:10
+          marginBottom:10,
       },
       detailsTitle:{
           fontWeight:'bold',
@@ -310,11 +311,12 @@ const styles =StyleSheet.create({
       },
       detailsVal:{
           marginLeft:5,
-          fontSize:18
+          fontSize:18,
       },
       description:{
         marginLeft:5,
-        fontSize:14
+        fontSize:14,
+        marginRight:3
       },
       descriptionContainer:{
         alignSelf:'flex-start',
