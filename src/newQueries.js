@@ -13,12 +13,12 @@ export const listUserFriends = /* GraphQL */ `
         email
         mobileNo
         review {
-            items {
+          items {
             id
             movieID
             userID
             rating
-            }
+          }
         }
         movie {
           nextToken
